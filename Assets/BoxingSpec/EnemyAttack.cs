@@ -13,10 +13,14 @@ public class EnemyAttack : MonoBehaviour
     bool isPunching = false; //is it punching. -Tobias
     float timer;
     float maxTime;
+    Vector3 leftOriginalPos;
+    Vector3 rightOriginalPos;
 
     // Use this for initialization
     void Start()
     {
+        leftOriginalPos = LeftHand.transform.position;
+        rightOriginalPos = RightHand.transform.position;
         maxTime = Random.Range(1.1f, maxTimer); //Sets time goal for the timer to a random number between 1 and specified max time. -Tobias
     }
 
@@ -28,11 +32,11 @@ public class EnemyAttack : MonoBehaviour
         {
             if (isLeft) //If it is the left hand's turn to punch. -Tobias
             {
-                StartCoroutine(Punch(LeftHand, new Vector3(2, 0, 0)));
+                StartCoroutine(Punch(LeftHand, leftOriginalPos));
             }
             else //Otherwise it must be the right hand's turn to punch. -Tobias
             {
-                StartCoroutine(Punch(RightHand, new Vector3(-2, 0, 0)));
+                StartCoroutine(Punch(RightHand, rightOriginalPos));
             }
             isPunching = true; //Sets isPunching to true. To stop the program from punching with both hands at the same time. -Tobias
             maxTime = Random.Range(1, 5); //Sets new max time. -Tobias
@@ -53,7 +57,17 @@ public class EnemyAttack : MonoBehaviour
         {
             yield return new WaitForSeconds(0.5f); //Wait for half a second. -Tobias.
             isPunching = false;
-            handObject.transform.position = originalPos; //Puts the hand back to its original position. -Tobias.
+            StartCoroutine(ReturnHand(handObject, originalPos)); //Puts the hand back to its original position. -Tobias.
+        }
+    }
+    
+    IEnumerator ReturnHand(GameObject handObject, Vector3 originalPos)
+    {
+        while (Vector3.Distance(handObject.transform.position, originalPos) >= 1)
+        { //If the distance between the original position and the hand is more than 1.-Tobias
+            float step = punchSpeed * Time.deltaTime;
+            handObject.transform.position = Vector3.MoveTowards(handObject.transform.position, originalPos, step); //Moves the hand towards the camera. -Tobias
+            yield return null;
         }
     }
 }
