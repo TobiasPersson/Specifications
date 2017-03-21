@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class NodeSelector : MonoBehaviour {
-    public Vector2 startPosition; //First position that is inputed. -Tobias
-    public Vector2 endPosition; //Last postition that is inputed. -Tobias
-    List<Vector2> nodes; //variable for the list of positions that are between the first and last position. -Tobias
+
+    public Vector2 startPosition;
+    public Vector2 endPosition;
+    List<Vector2> nodes;
 
 	// Use this for initialization
 	void Start () {
@@ -23,46 +24,53 @@ public class NodeSelector : MonoBehaviour {
     List<Vector2> NodeFiller(Vector2 startNode, Vector2 endNode) //Method for finding each position between the first and last position. -Tobias
     {
         List<Vector2> nodes = new List<Vector2>(); //Creates variable list that will be returned later. -Tobias
-        if (endNode.x >= startNode.x) //If the end position is right of the start position. -Tobias
+
+        /*
+         *  The next part checks if the end node is either left or right of the start node.
+         *  It will then run a function for every x between the start node (inclusive) and ende node (inclusive).
+         *  This list of vector2s will be added to the nodes list.
+         */ 
+        if (endNode.x >= startNode.x)
         {
-            for (int x = (int)startNode.x; x <= endNode.x; x++) //For every x position when x is less than or equal to the last positions x value. -Tobias
+            for (int x = (int)startNode.x; x <= endNode.x; x++)
             {
-                if (endNode.y >= startNode.y) //If the end position is above the start position. -Tobias
-                {
-                    for (int y = (int)startNode.y; y <= endNode.y; y++) //For every y position when y is less than or equal to the last positions y value. -Tobias
-                    {
-                        nodes.Add(new Vector2(x, y)); //Adds the current position to the list. -Tobias
-                    }
-                }
-                else //If the end position is below the start position. -Tobias
-                {
-                    for (int y = (int)endNode.y; y <= startNode.y; y++) //For every y position when y is more than or equal to the start positions y value. -Tobias
-                    {
-                        nodes.Add(new Vector2(x, y));//Adds the current position to the list. -Tobias
-                    }
-                }
+                nodes.AddRange(AddNode(endNode, startNode, x));
             }
         }
-        else //If the end position is left of the start position. -Tobias
+        else
         {
-            for (int x = (int)endNode.x; x <= startNode.x; x++) //For every x position when x is less than or equal to the last positions x value. -Tobias
+            for (int x = (int)endNode.x; x <= startNode.x; x++)
             {
-                if (endNode.y >= startNode.y) //If the end position is above the start position. -Tobias
-                {
-                    for (int y = (int)startNode.y; y <= endNode.y; y++) //For every y position when y is less than or equal to the last positions y value. -Tobias
-                    {
-                        nodes.Add(new Vector2(x, y)); //Adds the current position to the list. -Tobias
-                    }
-                }
-                else //If the end position is below the start position. -Tobias
-                {
-                    for (int y = (int)endNode.y; y <= startNode.y; y++) //For every y position when y is more than or equal to the start positions y value. -Tobias
-                    {
-                        nodes.Add(new Vector2(x, y)); //Adds the current position to the list. -Tobias
-                    }
-                }
+                nodes.AddRange(AddNode(endNode, startNode, x));
             }
         }
         return nodes; //Returns the list of all the positions. -Tobias
+    }
+
+    /* Function that checks if the start position is above or below the end position.
+     * It then adds the positions between the end and start to a list.
+     * Lastly it returns aforementioned list.
+     */
+
+    List<Vector2> AddNode(Vector2 biggestNode, Vector2 smallestNode, int x)
+    {
+        
+        List<Vector2> newNode = new List<Vector2>();
+        
+            if (biggestNode.y >= smallestNode.y)
+            {
+                for (int y = (int)smallestNode.y; y <= biggestNode.y; y++)
+                {
+                    newNode.Add( new Vector2(x, y));
+                }
+            }
+            else
+            {
+                for (int y = (int)biggestNode.y; y <= smallestNode.y; y++)
+                {
+                    newNode.Add(new Vector2(x, y));
+                }
+            }
+        return newNode;
     }
 }
